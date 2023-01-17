@@ -3,6 +3,8 @@ import numpy as np
 
 pontosOriginal = []
 pontosNova = []
+imgO = None #Imagem Original
+imgN = None #Imagem Nova
 
 def abrirImg(nome):
     return cv2.imread(nome)
@@ -21,6 +23,8 @@ def homography_matrix(src_points, dst_points):
     homography = Vt[-1].reshape(3, 3)
     return homography
 
+
+
 def clicar(event, x, y, flags, params):
     if event == cv2.EVENT_LBUTTONDOWN:
         if(len(pontosOriginal) < 4):
@@ -33,6 +37,11 @@ def clicar(event, x, y, flags, params):
                 print(ponto[0], ' ', ponto[1])
             coletarPontosNovos()
             matriz = homography_matrix(pontosOriginal, pontosNova)
+            imgN = gerarImagem(imgO, matriz)
+            cv2.imshow("Imagem Nova", imgN)
+            cv2.imwrite("ImagemNova.jpg",imgN)
+            
+
         
             
 def coletarPontosNovos():
