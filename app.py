@@ -6,6 +6,9 @@ pontosNova = []
 imgO = None #Imagem Original
 imgN = None #Imagem Nova
 
+altura = 0
+largure = 0
+
 def abrirImg(nome):
     return cv2.imread(nome)
 
@@ -45,10 +48,21 @@ def clicar(event, x, y, flags, params):
         
             
 def coletarPontosNovos():
-    for i in range(0,4):
-        x = input("x%d: " % i)
-        y = input("y%d: " % i)
-        pontosNova.append((x,y))
+    x0 = 0
+    y0 = 0
+    altura = input("Digite a altura da img:")
+    largura = input("Digite a largura da img:")
+    x1 = largura
+    y1 = 0
+    x2 = largura
+    y2 = altura
+    x3 = 0
+    y3 = altura
+    pontosNova.append((x0,y0))
+    pontosNova.append((x1,y1))
+    pontosNova.append((x2,y2))
+    pontosNova.append((x3,y3))
+
     print("Pontos Nova Imagem")
     for ponto in pontosNova:
                 print(ponto[0], ' ', ponto[1])
