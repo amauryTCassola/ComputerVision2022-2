@@ -53,24 +53,22 @@ def coletarPontosNovos():
     for ponto in pontosNova:
                 print(ponto[0], ' ', ponto[1])
 
-def correct_perspective(original_img, homography_matrix):
-    warped_image = np.copy(original_img)
-    warped_image[:] = [0,0,0]
-    height = original_img.shape[0]
-    width = original_img.shape[1]
+def correct_perspective(original_img, homography_matrix, destiny_width, destiny_height):
+    destiny_image = original_img.copy()
+    destiny_image = destiny_image[0:destiny_height, 0:destiny_width]
+    destiny_image[:] = [0,0,0]
+    inverse_h_matrix = np.linalg.inv(homography_matrix)
 
-    for i in range(height):
-        for j in range(width):
-            original_x = j
-            original_y = i
-            original_coords = np.array([original_x, original_y, 1])
-            transformed = homography_matrix @ original_coords
-            destiny_point = [int(transformed[0]/transformed[2]), int(transformed[1]/transformed[2])]
-            destiny_x = destiny_point[0]
-            destiny_y = destiny_point[1]
-            warped_image[destiny_y, destiny_x] = original_img[original_y, original_x]
+    for destiny_y in range(destiny_height):
+        for destiny_x in range(destiny_width):
+            destiny_coords = np.array([destiny_x, destiny_y, 1])
+            transformed = inverse_h_matrix @ destiny_coords
+            origin_point = [int(transformed[0]/transformed[2]), int(transformed[1]/transformed[2])]
+            origin_x = origin_point[0]
+            origin_y = origin_point[1]
+            destiny_image[destiny_y, destiny_x] = original_img[origin_y, origin_x]
             
-    return warped_image
+    return destiny_image
 
 def main():
     # path = input("Digite o nome do arquivo:\n")
@@ -96,10 +94,9 @@ def main():
 
     h_matrix = homography_matrix(source_points, destination_points)
 
-    warped_image = correct_perspective(img, h_matrix)
+    warped_image = correct_perspective(img, h_matrix, 1500, 1140)
 
-    cropped_image = warped_image[0:1140, 0:1500]
-    cv2.imwrite('warped_test1.jpg', cropped_image)
+    cv2.imwrite('warped_test1.jpg', warped_image)
 
 
 if __name__ == "__main__":
