@@ -6,6 +6,9 @@ pontosNova = []
 imgO = None #Imagem Original
 imgN = None #Imagem Nova
 
+altura = 0
+largure = 0
+
 def abrirImg(nome):
     return cv2.imread(nome)
 
