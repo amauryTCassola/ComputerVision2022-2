@@ -51,23 +51,23 @@ def homography_matrix(src_points, dst_points):
     homography = Vt[-1].reshape(3, 3)
     return homography
 
-if __name__ == "__main__":
-    source_points = np.array([
-        [200, 541],
-        [1216, 413],
-        [1373, 993],
-        [267, 1208]
-    ])
-    destination_points = np.array([
-        [0, 0],
-        [300, 0],
-        [300, 300],
-        [0, 300],
-    ])
+# if __name__ == "__main__":
+#     source_points = np.array([
+#         [200, 541],
+#         [1216, 413],
+#         [1373, 993],
+#         [267, 1208]
+#     ])
+#     destination_points = np.array([
+#         [0, 0],
+#         [300, 0],
+#         [300, 300],
+#         [0, 300],
+#     ])
 
-    h = homography_matrix(source_points, destination_points)
+#     h = homography_matrix(source_points, destination_points)
 
-    source = np.array([267, 1208, 1])
-    transformed = h @ source
+#     source = np.array([267, 1208, 1])
+#     transformed = h @ source
 
-    print([int(transformed[0]/transformed[2]), int(transformed[1]/transformed[2])])
+#     print([int(transformed[0]/transformed[2]), int(transformed[1]/transformed[2])])
