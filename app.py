@@ -1,13 +1,15 @@
+#sudo pip install opencv-python
+#sudo apt install qtwayland5 ACHO Q N PRECISA
 import cv2
 import numpy as np
+import sys
 
 pontosOriginal = []
-pontosNova = []
+pontosNova = np.array([])
 imgO = None #Imagem Original
 imgN = None #Imagem Nova
-
 altura = 0
-largure = 0
+largura = 0
 
 def abrirImg(nome):
     return cv2.imread(nome)
@@ -29,39 +31,61 @@ def homography_matrix(src_points, dst_points):
 
 
 def clicar(event, x, y, flags, params):
+    global pontosOriginal, altura, largura
     if event == cv2.EVENT_LBUTTONDOWN:
         if(len(pontosOriginal) < 4):
+            if(len(pontosOriginal) == 0):
+                cv2.setWindowTitle("Original", "Clique no canto superior direito")
+            if(len(pontosOriginal) == 1):
+                cv2.setWindowTitle("Original", "Clique no canto inferior esquerdo")
+            if(len(pontosOriginal) == 2):
+                cv2.setWindowTitle("Original", "Clique no canto inferior direito")
+            if(len(pontosOriginal) == 2):
+                cv2.setWindowTitle("Original", "Clique em qualquer lugar para confirmar")
             print("Adicionando ponto:")
             print(x, ' ', y)
-            pontosOriginal.append((x,y))
+            pontosOriginal.append([x,y])
         else:
+            cv2.setWindowTitle("Original", "Aguarde")
+            pontosOriginal = np.array(pontosOriginal)
             print("Pontos Original")
             for ponto in pontosOriginal:
                 print(ponto[0], ' ', ponto[1])
             coletarPontosNovos()
+            print(pontosOriginal)
+            print(pontosNova)
             matriz = homography_matrix(pontosOriginal, pontosNova)
-            imgN = gerarImagem(imgO, matriz)
-            cv2.imshow("Imagem Nova", imgN)
+            print(matriz)
+            print(altura)
+            print(largura)
+            imgN = correct_perspective(imgO, matriz, largura, altura)
             cv2.imwrite("ImagemNova.jpg",imgN)
+            cv2.imshow("Imagem Nova - Aperte qualquer tecla para fechar", imgN)
+            cv2.waitKey(0)
+            cv2.destroyAllWindows()
+            sys.exit(0)
             
 
         
             
 def coletarPontosNovos():
+    global pontosNova, altura, largura
+    #altura = int(input("Digite a altura da img:"))
+    #largura = int(input("Digite a largura da img:"))
     x0 = 0
     y0 = 0
-    altura = input("Digite a altura da img:")
-    largura = input("Digite a largura da img:")
     x1 = largura
     y1 = 0
-    x2 = largura
+    x2 = 0
     y2 = altura
-    x3 = 0
+    x3 = largura
     y3 = altura
-    pontosNova.append((x0,y0))
-    pontosNova.append((x1,y1))
-    pontosNova.append((x2,y2))
-    pontosNova.append((x3,y3))
+    pontosNova = np.array([
+        [x0, y0],
+        [x1, y1],
+        [x2, y2],
+        [x3, y3],
+    ])
 
     print("Pontos Nova Imagem")
     for ponto in pontosNova:
@@ -85,33 +109,26 @@ def correct_perspective(original_img, homography_matrix, destiny_width, destiny_
     return destiny_image
 
 def main():
-    # path = input("Digite o nome do arquivo:\n")
-    # img = abrirImg(path)
-    # nomeOriginal = "Imagem Original"
-    # cv2.imshow(nomeOriginal, img)
-    # cv2.setMouseCallback(nomeOriginal, clicar)
+    global imgO, altura, largura
+    print(len(sys.argv))
+    if(len(sys.argv) < 4 or len(sys.argv) > 4):
+        print("Primeiro argumento, nome do arquivo original\n Segundo argumento altura\n teceiro argumento largura")
+        sys.exit(0)
+    #path = input("Digite o nome do arquivo:\n")
+    path = sys.argv[1]
+    altura = int(sys.argv[2])
+    largura = int(sys.argv[3])
+    imgO = abrirImg(path)
+    nomeOriginal = "Original"
+    cv2.namedWindow(nomeOriginal, cv2.WINDOW_NORMAL)
+    cv2.setWindowTitle(nomeOriginal, "Clique no canto superior esquerdo")
+    cv2.imshow(nomeOriginal, imgO)
+    cv2.setMouseCallback(nomeOriginal, clicar)
 
-    img = cv2.imread('foto1_cap1.jpg', -1)
-
-    source_points = np.array([
-        [840, 1072],
-        [2650, 670],
-        [802, 2458],
-        [2833, 2460]
-    ])
-    destination_points = np.array([
-        [0, 0],
-        [1500, 0],
-        [0, 1140],
-        [1500, 1140],
-    ])
-
-    h_matrix = homography_matrix(source_points, destination_points)
-
-    warped_image = correct_perspective(img, h_matrix, 1500, 1140)
-
-    cv2.imwrite('warped_test1.jpg', warped_image)
-
+    cv2.waitKey(0)
+    cv2.destroyAllWindows()
+    sys.exit(0)
 
 if __name__ == "__main__":
     main()
+
