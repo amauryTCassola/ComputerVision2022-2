@@ -40,7 +40,7 @@ def clicar(event, x, y, flags, params):
                 cv2.setWindowTitle("Original", "Clique no canto inferior esquerdo")
             if(len(pontosOriginal) == 2):
                 cv2.setWindowTitle("Original", "Clique no canto inferior direito")
-            if(len(pontosOriginal) == 2):
+            if(len(pontosOriginal) == 3):
                 cv2.setWindowTitle("Original", "Clique em qualquer lugar para confirmar")
             print("Adicionando ponto:")
             print(x, ' ', y)
