@@ -60,6 +60,7 @@ def clicar(event, x, y, flags, params):
             print(largura)
             imgN = correct_perspective(imgO, matriz, largura, altura)
             cv2.imwrite("ImagemNova.jpg",imgN)
+            cv2.namedWindow("Imagem Nova - Aperte qualquer tecla para fechar", cv2.WINDOW_NORMAL)
             cv2.imshow("Imagem Nova - Aperte qualquer tecla para fechar", imgN)
             cv2.waitKey(0)
             cv2.destroyAllWindows()
